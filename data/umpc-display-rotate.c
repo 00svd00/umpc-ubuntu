@@ -40,13 +40,25 @@ static const char *transforms[]  = {
   "0 -1 1 1 0 0 0 0 1",
   NULL
 };
+static const char *transforms_pen[]  = {
+  "0 -1 1 1 0 0 0 0 1", 
+  "0 1 0 -1 0 1 0 0 1", //ok
+  "1 0 0 0 1 0 0 0 1", //ok
+  "-1 0 1 0 -1 1 0 0 1", //ok
+  NULL
+};
 
 static const char touchy[][48] = {
   "GXTP7380:00 27C6:0113",                    //GPD Pocket 3
-  "GXTP7380:00 27C6:0113 Stylus Pen (0)",     //GPD Pocket 3
-  "GXTP7380:00 27C6:0113 Stylus Eraser (0)",  //GPD Pocket 3
+//  "GXTP7380:00 27C6:0113 Stylus Pen (0)",     //GPD Pocket 3
+//  "GXTP7380:00 27C6:0113 Stylus Eraser (0)",  //GPD Pocket 3
   "Goodix Capacitive TouchScreen"             //TopJoy Falcon
 };
+static const char touchy_pen[][48] = {
+  "GXTP7380:00 27C6:0113 Stylus Pen (0)",     //GPD Pocket 3
+  "GXTP7380:00 27C6:0113 Stylus Eraser (0)"  //GPD Pocket 3
+};
+
 
 static const char screens[][8] = {
   "DSI1"  //GPD Pocket 3 & TopJoy Falcon
@@ -129,6 +141,13 @@ void rotate_touch(int orientation) {
     //fprintf(stderr, "  %s\n", cmd);
     int status = system(cmd);
   }
+  for (size_t i = 0; i < sizeof(touchy_pen) / sizeof(touchy_pen[0]); i++) {
+    fprintf(stdout, "  Rotating Pen: %s (%s)\n", touchy_pen[i], orientations[orientation]);
+    sprintf(cmd, "xinput set-prop \"%s\" \"Coordinate Transformation Matrix\" %s 2>/dev/null", touchy_pen[i], transforms_pen[orientation]);
+    //fprintf(stderr, "  %s\n", cmd);
+    int status = system(cmd);
+  }
+
 }
 
 // TODO: Only rotate connected displays
